@@ -3,617 +3,178 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Keystroke Dynamics Authentication</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        :root {
-            --primary: #4361ee;
-            --primary-dark: #3a56d4;
-            --secondary: #7209b7;
-            --success: #4cc9f0;
-            --danger: #f72585;
-            --warning: #f8961e;
-            --light: #f8f9fa;
-            --dark: #212529;
-            --gray: #6c757d;
-            --border: #dee2e6;
-            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            --radius: 12px;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-            color: var(--dark);
-            line-height: 1.6;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: 1fr 400px;
-            gap: 30px;
-        }
-
-        @media (max-width: 968px) {
-            .container {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .main-panel {
-            background: white;
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            overflow: hidden;
-        }
-
-        .sidebar {
-            background: white;
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            padding: 25px;
-            height: fit-content;
-        }
-
-        .header {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: white;
-            padding: 30px;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .header::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
-        }
-
-        .header h1 {
-            font-size: 2.5em;
-            margin-bottom: 10px;
-            font-weight: 700;
-            position: relative;
-        }
-
-        .header p {
-            opacity: 0.9;
-            font-size: 1.1em;
-            position: relative;
-        }
-
-        .content {
-            padding: 30px;
-        }
-
-        .card {
-            background: white;
-            border-radius: var(--radius);
-            padding: 25px;
-            margin-bottom: 25px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            border: 1px solid var(--border);
-        }
-
-        .card-title {
-            font-size: 1.3em;
-            font-weight: 600;
-            margin-bottom: 15px;
-            color: var(--primary);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .input-group {
-            margin-bottom: 20px;
-        }
-
-        .input-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: var(--dark);
-        }
-
-        .password-container {
-            position: relative;
-        }
-
-        .password-input {
-            width: 100%;
-            padding: 15px 50px 15px 15px;
-            border: 2px solid var(--border);
-            border-radius: 8px;
-            font-size: 16px;
-            transition: all 0.3s;
-            background: var(--light);
-        }
-
-        .password-input:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
-        }
-
-        .password-toggle {
-            position: absolute;
-            right: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: none;
-            border: none;
-            color: var(--gray);
-            cursor: pointer;
-            font-size: 1.2em;
-        }
-
-        .button-group {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 25px;
-        }
-
-        .btn {
-            flex: 1;
-            padding: 15px 20px;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        .btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
-        .btn-primary {
-            background: var(--primary);
-            color: white;
-        }
-
-        .btn-primary:hover:not(:disabled) {
-            background: var(--primary-dark);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-        }
-
-        .btn-secondary {
-            background: var(--gray);
-            color: white;
-        }
-
-        .btn-secondary:hover:not(:disabled) {
-            background: #5a6268;
-            transform: translateY(-2px);
-        }
-
-        .btn-success {
-            background: var(--success);
-            color: white;
-        }
-
-        .btn-warning {
-            background: var(--warning);
-            color: white;
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-
-        .stat-card {
-            background: var(--light);
-            padding: 15px;
-            border-radius: 8px;
-            text-align: center;
-            border-left: 4px solid var(--primary);
-        }
-
-        .stat-value {
-            font-size: 1.5em;
-            font-weight: bold;
-            color: var(--dark);
-            margin-bottom: 5px;
-        }
-
-        .stat-label {
-            font-size: 0.85em;
-            color: var(--gray);
-        }
-
-        .security-high { color: #28a745; border-left-color: #28a745; }
-        .security-medium { color: #ffc107; border-left-color: #ffc107; }
-        .security-low { color: #fd7e14; border-left-color: #fd7e14; }
-        .security-very-low { color: #dc3545; border-left-color: #dc3545; }
-
-        .results {
-            display: none;
-            animation: fadeIn 0.5s ease-in;
-        }
-
-        .result-card {
-            background: white;
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 20px;
-            border-left: 4px solid var(--primary);
-        }
-
-        .result-authentic {
-            border-left-color: #28a745;
-            background: linear-gradient(135deg, #d4edda, #c3e6cb);
-        }
-
-        .result-impostor {
-            border-left-color: #dc3545;
-            background: linear-gradient(135deg, #f8d7da, #f5c6cb);
-        }
-
-        .loading {
-            text-align: center;
-            padding: 30px;
-            display: none;
-        }
-
-        .spinner {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid var(--primary);
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 15px;
-        }
-
-        .progress-container {
-            width: 100%;
-            height: 8px;
-            background: var(--border);
-            border-radius: 4px;
-            margin: 20px 0;
-            overflow: hidden;
-        }
-
-        .progress-bar {
-            height: 100%;
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
-            width: 0%;
-            transition: width 0.5s ease;
-        }
-
-        .model-predictions {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 10px;
-            margin-top: 15px;
-        }
-
-        .model-card {
-            background: white;
-            padding: 15px;
-            border-radius: 8px;
-            text-align: center;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            border: 1px solid var(--border);
-        }
-
-        .model-name {
-            font-weight: 600;
-            margin-bottom: 8px;
-            font-size: 0.9em;
-        }
-
-        .model-status {
-            font-size: 0.85em;
-            padding: 4px 8px;
-            border-radius: 20px;
-            display: inline-block;
-        }
-
-        .status-legitimate {
-            background: #d4edda;
-            color: #155724;
-        }
-
-        .status-impostor {
-            background: #f8d7da;
-            color: #721c24;
-        }
-
-        .model-confidence {
-            font-size: 1.1em;
-            font-weight: bold;
-            margin-top: 5px;
-        }
-
-        .typing-visualization {
-            height: 100px;
-            background: var(--light);
-            border-radius: 8px;
-            margin: 20px 0;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .typing-bar {
-            position: absolute;
-            bottom: 0;
-            width: 4px;
-            background: var(--primary);
-            transition: all 0.1s ease;
-        }
-
-        .recommendations {
-            margin-top: 20px;
-        }
-
-        .recommendation-list {
-            list-style: none;
-        }
-
-        .recommendation-item {
-            padding: 8px 0;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .recommendation-item:last-child {
-            border-bottom: none;
-        }
-
-        .recommendation-icon {
-            color: var(--warning);
-            font-size: 1.2em;
-        }
-
-        .risk-indicator {
-            display: inline-block;
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            margin-right: 8px;
-        }
-
-        .risk-high { background: #dc3545; }
-        .risk-medium { background: #ffc107; }
-        .risk-low { background: #28a745; }
-        .risk-very-low { background: #6f42c1; }
-
-        .feature-list {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 10px;
-            margin-top: 15px;
-        }
-
-        .feature-item {
-            background: var(--light);
-            padding: 10px;
-            border-radius: 6px;
-            font-size: 0.85em;
-        }
-
-        .feature-name {
-            font-weight: 600;
-            color: var(--gray);
-        }
-
-        .feature-value {
-            font-weight: bold;
-            color: var(--dark);
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
-
-        .pulse {
-            animation: pulse 2s infinite;
-        }
-
-        .file-upload {
-            border: 2px dashed var(--border);
-            border-radius: 8px;
-            padding: 30px;
-            text-align: center;
-            margin-bottom: 20px;
-            transition: all 0.3s;
-            cursor: pointer;
-        }
-
-        .file-upload:hover {
-            border-color: var(--primary);
-            background: rgba(67, 97, 238, 0.05);
-        }
-
-        .file-upload i {
-            font-size: 2em;
-            color: var(--gray);
-            margin-bottom: 10px;
-        }
-
-        .system-status {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 15px;
-            background: var(--light);
-            border-radius: 8px;
-            margin-bottom: 20px;
-        }
-
-        .status-indicator {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .status-dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-        }
-
-        .status-online {
-            background: #28a745;
-        }
-
-        .status-offline {
-            background: #dc3545;
-        }
-
-        .keystroke-counter {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: rgba(0,0,0,0.1);
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-size: 0.85em;
-        }
-
-        .confidence-meter {
-            height: 10px;
-            background: var(--border);
-            border-radius: 5px;
-            margin: 10px 0;
-            overflow: hidden;
-        }
-
-        .confidence-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #dc3545, #ffc107, #28a745);
-            width: 0%;
-            transition: width 0.5s ease;
-        }
-
-        .typing-rhythm {
-            display: flex;
-            justify-content: center;
-            align-items: flex-end;
-            height: 60px;
-            gap: 3px;
-            margin: 15px 0;
-        }
-
-        .rhythm-bar {
-            width: 6px;
-            background: var(--primary);
-            border-radius: 3px 3px 0 0;
-            transition: height 0.2s ease;
-        }
-    </style>
+    <title>Dashboard - Keystroke Dynamics</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
-<body>
-    <div class="container">
-        <div class="main-panel">
-            <div class="header">
-                <div class="keystroke-counter">
-                    <span id="keystrokeCount">0</span> keystrokes
+<body class="dashboard-page">
+    <div class="aurora"></div>
+    <div class="aurora"></div>
+    <div class="aurora"></div>
+
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="glass-panel sidebar">
+            <div>
+                <div class="sidebar-header">
+                    <div class="logo">
+                        <i class="fas fa-fingerprint"></i>
+                        <span>BioKey</span>
+                    </div>
                 </div>
-                <h1><i class="fas fa-fingerprint"></i> Keystroke Dynamics</h1>
-                <p>Advanced Behavioral Biometric Authentication System</p>
+                <ul class="nav-links">
+                    <li class="active">
+                        <a href="#">
+                            <i class="fas fa-chart-line"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            <i class="fas fa-history"></i>
+                            <span>History</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            <i class="fas fa-cog"></i>
+                            <span>Settings</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="sidebar-footer">
+                <div class="card" style="background: rgba(255,255,255,0.05); border: none; margin-bottom: 20px;">
+                    <div class="card-title" style="font-size: 0.9rem; color: var(--text-muted);">
+                        <i class="fas fa-history"></i> Recent Activity
+                    </div>
+                    <div id="activityLog" style="font-size: 0.8rem; color: var(--text-muted); max-height: 150px; overflow-y: auto;">
+                        <p style="text-align: center; padding: 10px;">No recent activity</p>
+                    </div>
+                </div>
+
+                <div class="user-profile">
+                    <div class="avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="user-info">
+                        <span class="username">{{ user_name }}</span>
+                        <span class="role">User</span>
+                    </div>
+                    <a href="{{ url_for('home') }}" class="logout-btn">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </a>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="glass-panel top-bar">
+                <div class="welcome-text">
+                    <h1>Welcome back, {{ user_name }}!</h1>
+                    <p>Ready to verify your identity?</p>
+                </div>
+                <div class="system-status">
+                    <div class="status-indicator">
+                        <div class="status-dot status-online" id="statusDot"></div>
+                        <span id="statusText" style="color: var(--text-muted);">System Online</span>
+                    </div>
+                    <span id="modelStatus" style="font-size: 0.8rem; color: var(--text-muted); margin-left: 10px;">Model Ready</span>
+                </div>
             </div>
 
-            <div class="content">
-                <div class="card">
-                    <div class="card-title">
-                        <i class="fas fa-keyboard"></i> Authentication Interface
-                    </div>
-                    <div class="input-group">
-                        <label for="passwordInput">Type your password to authenticate:</label>
-                        <div class="password-container">
-                            <input type="password" id="passwordInput" class="password-input" 
-                                   placeholder="Enter your password for analysis..." autocomplete="off">
-                            <button type="button" class="password-toggle" id="passwordToggle">
-                                <i class="fas fa-eye"></i>
-                            </button>
+            <div class="dashboard-grid">
+                <!-- Verification Panel -->
+                <div class="glass-panel">
+                    <div class="panel-header">
+                        <h2><i class="fas fa-shield-alt"></i> Verification</h2>
+                        <div class="keystroke-counter" style="font-size: 0.9rem; color: var(--text-muted);">
+                            <span id="keystrokeCount">0</span> keystrokes
                         </div>
+                    </div>
+                    
+                    <div class="typing-area">
+                        <div class="input-group">
+                            <label>Username</label>
+                            <div class="input-wrapper">
+                                <i class="fas fa-user"></i>
+                                <input type="text" value="{{ user_name }}" readonly style="opacity: 0.7;">
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label>Password Pattern</label>
+                            <div class="input-wrapper">
+                                <i class="fas fa-lock"></i>
+                                <input type="password" id="passwordInput" placeholder="Type your password pattern" autocomplete="off">
+                                <i class="fas fa-eye toggle-password" id="passwordToggle"></i>
+                            </div>
+                        </div>
+
                         <div class="typing-rhythm" id="typingRhythm">
                             <!-- Rhythm bars will be generated here -->
                         </div>
-                    </div>
 
-                    <div class="button-group">
-                        <button class="btn btn-primary" id="authButton" onclick="startAuthentication()">
-                            <i class="fas fa-lock"></i> Authenticate
-                        </button>
-                        <button class="btn btn-secondary" onclick="clearInput()">
-                            <i class="fas fa-trash"></i> Clear
-                        </button>
-                    </div>
-
-                    <div class="file-upload" onclick="document.getElementById('fileInput').click()">
-                        <i class="fas fa-cloud-upload-alt"></i>
-                        <h3>Or Upload Keystroke Data</h3>
-                        <p>Click to upload a CSV file with recorded keystrokes</p>
-                        <input type="file" id="fileInput" accept=".csv" style="display: none;" onchange="handleFileUpload(this.files)">
-                    </div>
-                </div>
-
-                <div class="loading" id="loading">
-                    <div class="spinner"></div>
-                    <h3>Analyzing Keystroke Dynamics</h3>
-                    <p>Please wait while we analyze your unique typing pattern...</p>
-                    <div class="progress-container">
-                        <div class="progress-bar" id="progressBar"></div>
-                    </div>
-                </div>
-
-                <div class="results" id="results">
-                    <div class="card">
-                        <div class="card-title">
-                            <i class="fas fa-shield-alt"></i> Authentication Results
+                        <div id="typingVisualization" class="typing-visualization">
+                            <!-- Dynamic bars will be added here by JS -->
                         </div>
-                        <div class="result-card" id="authResult">
-                            <h3 id="resultTitle">Authentication Result</h3>
-                            <p id="resultText">Processing your keystroke pattern...</p>
+
+                        <div class="stats-grid" style="margin-bottom: 20px;">
+                            <div class="stat-card">
+                                <div class="stat-value" id="liveDwellTime">0ms</div>
+                                <div class="stat-label">Avg Dwell Time</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value" id="liveFlightTime">0ms</div>
+                                <div class="stat-label">Avg Flight Time</div>
+                            </div>
+                        </div>
+
+                        <div class="button-group" style="display: flex; gap: 10px;">
+                            <button id="authButton" class="btn-primary" onclick="keystrokeAnalyzer.startAuthentication()">
+                                <span>Verify Identity</span>
+                                <i class="fas fa-arrow-right"></i>
+                            </button>
+                            <button class="btn-primary" style="background: rgba(255,255,255,0.1); width: auto;" onclick="document.getElementById('passwordInput').value=''; keystrokeAnalyzer.keystrokes=[]; keystrokeAnalyzer.updateKeystrokeCounter();">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+
+                        <div class="file-upload" onclick="document.getElementById('fileInput').click()" style="margin-top: 20px; padding: 15px; border: 1px dashed var(--glass-border); border-radius: 12px; text-align: center; cursor: pointer; transition: 0.3s;">
+                            <i class="fas fa-cloud-upload-alt" style="color: #00f2ff; margin-bottom: 5px;"></i>
+                            <p style="font-size: 0.9rem; color: var(--text-muted);">Upload CSV Data</p>
+                            <input type="file" id="fileInput" accept=".csv" style="display: none;" onchange="handleFileUpload(this.files)">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Analysis Panel -->
+                <div class="glass-panel">
+                    <div class="panel-header">
+                        <h2><i class="fas fa-microchip"></i> Analysis Result</h2>
+                    </div>
+
+                    <div id="loading" class="loading">
+                        <div class="spinner"></div>
+                        <p>Analyzing keystroke dynamics...</p>
+                        <div class="progress-container">
+                            <div class="progress-bar" id="progressBar"></div>
+                        </div>
+                    </div>
+
+                    <div id="results" class="results">
+                        <div class="result-card" id="authResult" style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 16px; margin-bottom: 20px; border-left: 4px solid #00f2ff;">
+                            <h3 id="resultTitle" style="color: white; margin-bottom: 5px;">Result</h3>
+                            <p id="resultText" style="color: var(--text-muted);">Details...</p>
                         </div>
 
                         <div class="stats-grid">
                             <div class="stat-card">
                                 <div class="stat-value" id="confidenceValue">0%</div>
-                                <div class="stat-label">Confidence Score</div>
+                                <div class="stat-label">Confidence</div>
                                 <div class="confidence-meter">
                                     <div class="confidence-fill" id="confidenceFill"></div>
                                 </div>
@@ -624,98 +185,63 @@
                             </div>
                             <div class="stat-card">
                                 <div class="stat-value" id="anomalyScore">0%</div>
-                                <div class="stat-label">Anomaly Detection</div>
+                                <div class="stat-label">Anomaly Score</div>
                             </div>
                             <div class="stat-card">
                                 <div class="stat-value" id="keystrokeCountResult">0</div>
-                                <div class="stat-label">Keystrokes Analyzed</div>
+                                <div class="stat-label">Keystrokes</div>
                             </div>
                         </div>
 
-                        <div class="card-title" style="margin-top: 20px;">
-                            <i class="fas fa-robot"></i> Model Predictions
+                        <div style="margin-top: 20px;">
+                            <h3 style="font-size: 1rem; color: white; margin-bottom: 10px;">Model Predictions</h3>
+                            <div class="model-predictions" id="modelPredictions" style="display: grid; gap: 10px;">
+                                <!-- Models -->
+                            </div>
                         </div>
-                        <div class="model-predictions" id="modelPredictions">
-                            <!-- Model predictions will be inserted here -->
+
+                        <div style="margin-top: 20px;">
+                            <h3 style="font-size: 1rem; color: white; margin-bottom: 10px;">Typing Statistics</h3>
+                            <div class="feature-list" id="typingStats" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                                <!-- Stats -->
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 20px;">
+                            <h3 style="font-size: 1rem; color: white; margin-bottom: 10px;">Security Analysis</h3>
+                            <div id="securityAnalysis">
+                                <!-- Analysis -->
+                            </div>
                         </div>
                     </div>
-
-                    <div class="card">
-                        <div class="card-title">
-                            <i class="fas fa-chart-bar"></i> Typing Statistics
-                        </div>
-                        <div class="feature-list" id="typingStats">
-                            <!-- Typing statistics will be inserted here -->
-                        </div>
-                    </div>
-
-                    <div class="card">
-                        <div class="card-title">
-                            <i class="fas fa-exclamation-triangle"></i> Security Analysis
-                        </div>
-                        <div id="securityAnalysis">
-                            <!-- Security analysis will be inserted here -->
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="sidebar">
-            <div class="system-status">
-                <div class="status-indicator">
-                    <div class="status-dot status-online" id="statusDot"></div>
-                    <span id="statusText">System Online</span>
-                </div>
-                <span id="modelStatus">Model Ready</span>
-            </div>
-
-            <div class="card">
-                <div class="card-title">
-                    <i class="fas fa-info-circle"></i> How It Works
-                </div>
-                <p>This system analyzes your unique typing rhythm to verify your identity based on:</p>
-                <ul style="margin: 15px 0; padding-left: 20px;">
-                    <li>Key press duration (dwell time)</li>
-                    <li>Time between keys (flight time)</li>
-                    <li>Typing rhythm and consistency</li>
-                    <li>Error patterns and corrections</li>
-                </ul>
-                <p>No passwords are stored - only your typing behavior is analyzed.</p>
-            </div>
-
-            <div class="card">
-                <div class="card-title">
-                    <i class="fas fa-tachometer-alt"></i> Real-time Metrics
-                </div>
-                <div class="typing-visualization" id="typingVisualization">
-                    <!-- Visualization bars will be generated here -->
-                </div>
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-value" id="liveDwellTime">0ms</div>
-                        <div class="stat-label">Avg Dwell Time</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value" id="liveFlightTime">0ms</div>
-                        <div class="stat-label">Avg Flight Time</div>
+                    
+                    <!-- Placeholder state -->
+                    <div id="analysisPlaceholder" style="text-align: center; padding: 40px; color: var(--text-muted);">
+                        <i class="fas fa-chart-bar" style="font-size: 3rem; margin-bottom: 20px; opacity: 0.3;"></i>
+                        <p>Type your password to see real-time analysis</p>
                     </div>
                 </div>
             </div>
-
-            <div class="card">
-                <div class="card-title">
-                    <i class="fas fa-history"></i> Recent Activity
-                </div>
-                <div id="activityLog">
-                    <p style="text-align: center; color: var(--gray); padding: 20px;">
-                        No recent activity
-                    </p>
-                </div>
-            </div>
-        </div>
+        </main>
     </div>
 
     <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <script>
+        // Initialize the analyzer
+        const keystrokeAnalyzer = new KeystrokeAnalyzer();
+
+        // Hide placeholder when results are shown
+        const observer = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+                if (document.getElementById('results').style.display === 'block' || 
+                    document.getElementById('loading').style.display === 'block') {
+                    document.getElementById('analysisPlaceholder').style.display = 'none';
+                }
+            });
+        });
+
+        observer.observe(document.getElementById('results'), { attributes: true, attributeFilter: ['style'] });
+        observer.observe(document.getElementById('loading'), { attributes: true, attributeFilter: ['style'] });
+    </script>
 </body>
 </html>

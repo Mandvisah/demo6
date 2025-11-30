@@ -78,8 +78,15 @@ def save_keystroke_data(keystrokes):
         return None, None
 
 @app.route('/')
-def index():
-    """Main page"""
+def home():
+    """Landing page"""
+    if 'user_id' in session:
+        return redirect(url_for('dashboard'))
+    return render_template('home.html')
+
+@app.route('/dashboard')
+def dashboard():
+    """Dashboard page"""
     if 'user_id' not in session:
         return redirect(url_for('login'))
     return render_template('index.html', user_name=session.get('user_name'))
@@ -124,7 +131,7 @@ def login():
         if user and check_password_hash(user['password'], password):
             session['user_id'] = str(user['_id'])
             session['user_name'] = user['name']
-            return redirect(url_for('index'))
+            return redirect(url_for('dashboard'))
         else:
             return render_template('login.html', error='Invalid email or password')
 
@@ -133,7 +140,7 @@ def login():
 @app.route('/logout')
 def logout():
     session.clear()
-    return redirect(url_for('login'))
+    return redirect(url_for('home'))
 
 @app.route('/api/verify', methods=['POST'])
 def api_verify():
